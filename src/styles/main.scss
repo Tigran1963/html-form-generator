@@ -2,9 +2,9 @@
 @font-face {
 	font-family: "Montserrat";
 	src:
-		url("../assets/fonts/Montserrat-Regular.woff") format("woff"),
-		url("../assets/fonts/Montserrat-Regular.woff2") format("woff2");
-	font-weight: normal;
+		url("../assets/fonts/Montserrat-Medium.woff") format("woff"),
+		url("../assets/fonts/Montserrat-Medium.woff2") format("woff2");
+	font-weight: 500;
 	font-style: normal;
 	font-display: swap;
 }
@@ -96,16 +96,6 @@ h6 {
 	font-size: inherit;
 }
 
-// Settings
-body {
-	.lock & {
-		overflow: hidden;
-		touch-action: none;
-		overscroll-behavior: none;
-	}
-	.loaded & {
-	}
-}
 .wrapper {
 	min-height: 100%;
 	display: flex;
@@ -127,30 +117,4 @@ body {
 	max-width: $maxWidthContainer + px;
 	margin: 0 auto;
 	padding: 0 $containerPadding + px;
-}
-
-// Common styles
-.button {
-	background: $orangeColor;
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
-	border-radius: 10px;
-	width: toRem(250);
-	min-height: toRem(40);
-	padding: toRem(10) toRem(20);
-	font-size: toRem(20);
-	text-align: center;
-	color: #fff;
-	transition: all 0.3s;
-
-	@media (any-hover: hover) {
-		&:hover {
-			background: $orangeHoverColor;
-		}
-	}
-	&[disabled] {
-		opacity: 0.5;
-		cursor: default;
-	}
 }
