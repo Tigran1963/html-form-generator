@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, watch, ref } from 'vue'
 import FormGenerator from './components/FormGenerator.vue'
+import type { FormSchema } from './components/FormGenerator.vue'
 
-const formData = ref<Record<string, any>>({})
-const formSchema = ref({
+const initialSchema: FormSchema = {
 	"fields": [
 		{ "type": "text", "label": "Имя", "model": "name", "required": true },
 		{ "type": "email", "label": "Email", "model": "email", "required": true },
@@ -11,37 +11,45 @@ const formSchema = ref({
 		{ "type": "select", "label": "Роль", "model": "role", "options": ["Админ", "Пользователь"], "required": true },
 		{ "type": "checkbox", "label": "Согласен с условиями", "model": "terms", "required": true }
 	]
-})
+}
+const formSchema = ref<FormSchema>(initialSchema)
+const schemaInputString = ref(JSON.stringify(initialSchema, null, 2))
+
+const formData = ref<Record<string, any>>({})
 const formError = ref(false)
-const schemaString = computed({
-	get: () => JSON.stringify(formSchema.value, null, 2),
-	set: (val) => {
-		// try {
-		// 	formSchema.value = JSON.parse(val)
-		// } catch (e) {
-		// 	formError.value = !formError.value
-		// }
-		formSchema.value = JSON.parse(val)
+
+const handleSchemaInput = (val: string) => {
+	try {
+		const parsed = JSON.parse(val)
+		formSchema.value = parsed
+		formError.value = false
+	} catch (e) {
+		formError.value = true
 	}
+}
+// Следим за изменениями в textarea
+watch(schemaInputString, (newVal) => {
+	handleSchemaInput(newVal)
 })
+
 const formDataString = computed(() => JSON.stringify(formData.value, null, 2))
 </script>
 
 <template>
 	<div class="first-screen">
 		<div class="first-screen__container">
-			<h1 class="first-screen__title">Генератор HTML форм</h1>
+			<h1 class="first-screen__title">Компонент генерации HTML формы</h1>
 			<div class="first-screen__body">
 				<div class="first-screen__column">
 					<div class="first-screen__field">
 						<label for="upload-json-textarea" class="first-screen__label">Вставьте JSON-схему</label>
-						<textarea name="upload-json-textarea" id="upload-json-textarea" v-model="schemaString"
-							class="first-screen__textarea" :class="{'first-screen__textarea--error': formError}" ></textarea>
+						<textarea name="upload-json-textarea" id="upload-json-textarea" v-model="schemaInputString"
+							class="first-screen__textarea" :class="{ 'first-screen__textarea--error': formError }"></textarea>
 					</div>
 					<div class="first-screen__field">
 						<label for="reactive-form-data-textarea" class="first-screen__label">Состояние формы</label>
-						<textarea name="reactive-form-data-textarea" id="reactive-form-data-textarea" readonly v-model="formDataString"
-							class="first-screen__textarea"></textarea>
+						<textarea name="reactive-form-data-textarea" id="reactive-form-data-textarea" readonly
+							v-model="formDataString" class="first-screen__textarea"></textarea>
 					</div>
 				</div>
 				<div class="first-screen__column">
@@ -57,22 +65,30 @@ const formDataString = computed(() => JSON.stringify(formData.value, null, 2))
 .first-screen {
 	padding: toRem(50) 0;
 
-	&__container {}
-
 	&__title {
 		font-weight: 600;
 		font-size: toRem(40);
 		text-align: center;
 		margin-bottom: toRem(48);
+
+		@media (max-width:$mobile) {
+			font-size: toRem(32);
+		}
+
+		@media (max-width:$mobileSmall) {
+			font-size: toRem(24);
+		}
 	}
 
 	&__body {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: toRem(40);
-	}
 
-	&__column {}
+		@media (max-width:$mobile) {
+			grid-template-columns: 1fr;
+		}
+	}
 
 	&__column-title {
 		font-size: toRem(20);
@@ -97,7 +113,8 @@ const formDataString = computed(() => JSON.stringify(formData.value, null, 2))
 		resize: none;
 		background-color: #fff;
 		border: 2px solid $mainColor;
-		&--error{
+
+		&--error {
 			border-color: red;
 			outline-color: red;
 		}

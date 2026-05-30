@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-interface FormField {
+export interface FormField {
 	type: 'text' | 'email' | 'password' | 'select' | 'checkbox'
 	label: string
 	model: string
@@ -10,7 +10,7 @@ interface FormField {
 	pattern?: string
 	options?: string[]
 }
-interface FormSchema {
+export interface FormSchema {
 	fields: FormField[]
 }
 
@@ -155,7 +155,5 @@ const handleSubmit = (event: Event) => {
 			margin-right: toRem(8);
 		}
 	}
-
-	&__checkbox-text {}
 }
 </style>
